@@ -35,6 +35,10 @@ type AppProvider interface {
 	App(ctx context.Context, appID int) (models.App, error)
 }
 
+var (
+	ErrInvalidCredentials = errors.New("invalid credentials")
+)
+
 // New returns a new instance of the Auth service.
 func New(
 	log *slog.Logger,
@@ -78,6 +82,19 @@ func (a *Auth) Login(
 
 			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 		}
+		a.log.Error("failed to get user", err)
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
+		a.log.Info("invalid credentials", err)
+
+		return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+	}
+
+	app, err := a.appProvider.App(ctx, appID)
+	if err != nil {
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 }
 
