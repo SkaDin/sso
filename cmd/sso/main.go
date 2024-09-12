@@ -3,8 +3,10 @@ package main
 import (
 	"log/slog"
 	"os"
+	"os/signal"
 	"sso/internal/app"
 	"sso/internal/config"
+	"syscall"
 )
 
 const (
@@ -21,13 +23,23 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	log.Info("starting application")
-	log.Debug("Something")
 
 	//TODO: Инициализировать приложение (app)
 	application := app.New(log, cfg.Grpc.Port, cfg.StoragePath, cfg.TokenTTL)
 
-	application.GRPCSrv.MustRun()
+	go application.GRPCSrv.MustRun()
 	//TODO: Запустить gRPC-сервер приложения
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	sigNtf := <-stop
+
+	log.Info("spotting application", slog.String("signal", sigNtf.String()))
+
+	application.GRPCSrv.Stop()
+
+	log.Info("application stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
