@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -17,6 +18,7 @@ const (
 
 func main() {
 	//TODO: Инициализация объекста конфига
+	ctx := context.Background()
 	cfg := config.MustLoad()
 
 	// TODO: инициализация логгера
@@ -25,7 +27,7 @@ func main() {
 	log.Info("starting application")
 
 	//TODO: Инициализировать приложение (app)
-	application := app.New(log, cfg.Grpc.Port, cfg.StoragePath, cfg.TokenTTL)
+	application := app.New(ctx, log, cfg.Grpc.Port, cfg.StoragePath, cfg.TokenTTL)
 
 	go application.GRPCSrv.MustRun()
 	//TODO: Запустить gRPC-сервер приложения

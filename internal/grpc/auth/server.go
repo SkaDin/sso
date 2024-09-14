@@ -21,7 +21,7 @@ type Auth interface {
 		password string,
 	) (userID int64, err error)
 
-	isAdmin(ctx context.Context, userID int64) (bool, error)
+	IsAdmin(ctx context.Context, userID int64) (bool, error)
 }
 
 const (
@@ -80,7 +80,7 @@ func (s *serverAPI) IsAdmin(
 		return nil, err
 	}
 
-	isAdmin, err := s.auth.isAdmin(ctx, req.GetUserId())
+	isAdmin, err := s.auth.IsAdmin(ctx, req.GetUserId())
 	if err != nil {
 		//TODO handler errors
 		return nil, status.Error(codes.Internal, "internal error")
