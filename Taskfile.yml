@@ -7,3 +7,9 @@ tasks:
     desc: "Applies migrations to the database"
     cmds:
       - goose -dir ./migrations postgres "postgresql://SkaDin:05111996@localhost:5432/postgres" up
+  start_application:
+    aliases:
+      - start
+    desc: "Start applications"
+    cmds:
+      - go run cmd/sso/main.go --config=./config/local.yml

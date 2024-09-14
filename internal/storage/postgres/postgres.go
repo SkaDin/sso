@@ -28,13 +28,10 @@ func New(ctx context.Context, storagePath string) (*Storage, error) {
 func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (int64, error) {
 	const op = "storage.postgres.SaveUser"
 
-	stmt, err := s.db.Exec(ctx, `INSERT INTO users(email, pass_hash) VALUES ($1, $2)`, email, passHash)
+	var id int64
+	err := s.db.QueryRow(ctx, `INSERT INTO users(email, pass_hash) VALUES ($1, $2) RETURNING id`, email, passHash).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
-	}
-	id := stmt.RowsAffected()
-	if id != 1 {
-		return 0, fmt.Errorf("%s: error getting number of affected rows: %w", op, err)
 	}
 	return id, nil
 }
