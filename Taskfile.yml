@@ -1,0 +1,9 @@
+version: "3"
+
+tasks:
+  migrations:
+    aliases:
+      - migrate
+    desc: "Applies migrations to the database"
+    cmds:
+      - goose -dir ./migrations postgres "postgresql://SkaDin:05111996@localhost:5432/postgres" up

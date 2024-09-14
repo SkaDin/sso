@@ -1,5 +1,5 @@
 env: "local"
-storage_path: "postgresql://SkaDin:05111996@localhost:5432/sso"
+storage_path: "postgresql://SkaDin:05111996@localhost:5432/postgres"
 token_ttl: 1h
 grpc:
   port: 40040
