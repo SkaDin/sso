@@ -40,9 +40,7 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 	const op = "storage.postgres.User"
 
 	var user models.User
-
 	err := s.db.QueryRow(ctx, `SELECT id, email, pass_hash FROM users WHERE email=$1`, email).Scan(&user.ID, &user.Email, &user.PassHash)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.User{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
@@ -56,8 +54,7 @@ func (s *Storage) App(ctx context.Context, id int) (models.App, error) {
 	const op = "storage.postgres.App"
 	var app models.App
 
-	err := s.db.QueryRow(ctx, `SELECT id, name, secret FROM apps WHERE id = $1`, id).Scan(&app.ID, app.Name, app.Secret)
-
+	err := s.db.QueryRow(ctx, `SELECT id, name, secret FROM apps WHERE id = $1`, id).Scan(&app.ID, &app.Name, &app.Secret)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.App{}, fmt.Errorf("%s: %w", op, storage.ErrAppNotFound)
