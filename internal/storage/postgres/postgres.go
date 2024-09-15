@@ -41,7 +41,7 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 
 	var user models.User
 
-	err := s.db.QueryRow(ctx, `SELECT id, email FROM users WHERE email=$1`, email).Scan(&user)
+	err := s.db.QueryRow(ctx, `SELECT id, email, pass_hash FROM users WHERE email=$1`, email).Scan(&user.ID, &user.Email, &user.PassHash)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

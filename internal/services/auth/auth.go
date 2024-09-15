@@ -88,7 +88,6 @@ func (a *Auth) Login(
 		a.log.Error("failed to get user", err)
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
-
 	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
 		a.log.Info("invalid credentials", err)
 
