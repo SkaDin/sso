@@ -29,7 +29,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (
 	const op = "storage.postgres.SaveUser"
 
 	var id int64
-	err := s.db.QueryRow(ctx, `INSERT INTO users(email, pass_hash) VALUES ($1, $2) RETURNING id`, email, passHash).Scan(&id)
+	err := s.db.QueryRow(ctx, `INSERT INTO users(email, pass_hash) VALUES ($1, $2)`, email, passHash).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
