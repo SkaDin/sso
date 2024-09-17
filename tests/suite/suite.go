@@ -22,7 +22,7 @@ const (
 	grpcHost = "localhost"
 )
 
-func New(t *testing.T) (context.Context, *Suite) {
+func NewSuite(t *testing.T) (context.Context, *Suite) {
 	t.Helper()
 	t.Parallel()
 
