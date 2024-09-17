@@ -13,3 +13,10 @@ tasks:
     desc: "Start applications"
     cmds:
       - go run cmd/sso/main.go --config=./config/local.yml
+
+  test_app:
+    aliases:
+      - tests
+    desc: "create test data apps"
+    cmds:
+      - goose -dir ./tests/migrations postgres "postgresql://SkaDin:05111996@localhost:5432/postgres" up
