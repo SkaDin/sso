@@ -10,6 +10,7 @@ import (
 	"net/mail"
 	"sso/internal/services/auth"
 	"sso/internal/storage"
+	"strings"
 )
 
 type Auth interface {
@@ -71,7 +72,7 @@ func (s *serverAPI) Register(
 
 	userID, err := s.auth.RegisterNewUser(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
-		if errors.Is(err, storage.ErrUserExists) {
+		if isDuplicateEmailError(err) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 
@@ -137,4 +138,11 @@ func validateIsAdmin(req *ssov1.IsAdminRequest) error {
 		return status.Error(codes.InvalidArgument, "user_id is required")
 	}
 	return nil
+}
+
+func isDuplicateEmailError(err error) bool {
+	return errors.Is(err, storage.ErrUserExists) || (strings.Contains(
+		err.Error(),
+		"duplicate key value",
+	) && strings.Contains(err.Error(), "users_email_key"))
 }
