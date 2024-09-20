@@ -5,24 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
 )
 
 type Storage struct {
-	db *pgx.Conn
+	db *pgxpool.Pool
 }
 
 func New(ctx context.Context, storagePath string) (*Storage, error) {
 	const op = "storage.postgres.New"
 
-	db, err := pgx.Connect(ctx, storagePath)
+	dbpool, err := pgxpool.New(ctx, storagePath)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 
 	}
-	return &Storage{db: db}, nil
+	return &Storage{db: dbpool}, nil
 }
 
 func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (int64, error) {

@@ -103,6 +103,9 @@ func (s *serverAPI) IsAdmin(
 }
 
 func validateLogin(req *ssov1.LoginRequest) error {
+	if req.GetEmail() == "" && req.Password == "" {
+		return status.Error(codes.InvalidArgument, "invalid email or password")
+	}
 	if req.GetEmail() == "" || req.GetEmail() == invalidEmail {
 		return status.Error(codes.InvalidArgument, "email is required")
 	}
@@ -112,7 +115,6 @@ func validateLogin(req *ssov1.LoginRequest) error {
 	if req.GetPassword() == "" {
 		return status.Error(codes.InvalidArgument, "password is required")
 	}
-
 	if req.GetAppId() == emptyValue {
 		return status.Error(codes.InvalidArgument, "app_id is required")
 	}
